@@ -60,7 +60,7 @@ companion object {
                 .setContentText("End: ${df.format(Date(wakeUpTime))}")
                 .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
                 .setOngoing(true)
-                .addAction(R.drawable.ic_play,"Stop",stopPendingIntent)
+                .addAction(R.drawable.ic_stop,"Stop",stopPendingIntent)
                 .addAction(R.drawable.ic_pause,"Pause",pausePendingIntent)
 
         val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

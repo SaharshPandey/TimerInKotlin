@@ -65,12 +65,16 @@ class MainActivity : AppCompatActivity() {
             startTimer()
             timerState = TimerState.Running
             updateButtons()
+            Snackbar.make(v,"Timer Started",Snackbar.LENGTH_LONG)
+                    .show()
         }
 
         fab_pause.setOnClickListener{v->
             timer.cancel()
             timerState = TimerState.Paused
             updateButtons()
+            Snackbar.make(v,"Timer Paused",Snackbar.LENGTH_LONG)
+                    .show()
         }
 
         fab_stop.setOnClickListener{v->
@@ -78,6 +82,8 @@ class MainActivity : AppCompatActivity() {
             onTimerFinished()
             timerState = TimerState.Stopped
             updateButtons()
+            Snackbar.make(v,"Timer Stopped",Snackbar.LENGTH_LONG)
+                    .show()
         }
 
     }
