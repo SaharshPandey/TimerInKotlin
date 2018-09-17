@@ -14,6 +14,7 @@ import com.example.iknownothing.firstkotlin.util.PrefUtil
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
@@ -25,8 +26,21 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(context,TimerExpiredReciever::class.java)
             val pendingIntent = PendingIntent.getBroadcast(context,0,intent,0)
             alarmManager.setExact(AlarmManager.RTC_WAKEUP,wakeUpTime,pendingIntent)
+            PrefUtil.setAlarmSetTime(nowSeconds,context)
+            return wakeUpTime
+        }
+
+        fun removeAlarm(context: Context){
+            val intent =Intent(context,TimerExpiredReciever::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context,0,intent,0)
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
+            PrefUtil.setAlarmSetTime(0,context)
 
         }
+
+        val nowSeconds: Long
+            get() = Calendar.getInstance().timeInMillis / 1000
     }
 
     enum class TimerState{
@@ -49,20 +63,20 @@ class MainActivity : AppCompatActivity() {
         fab_start.setOnClickListener{v->
             startTimer()
             timerState = TimerState.Running
-            updaateButtons()
+            updateButtons()
         }
 
         fab_pause.setOnClickListener{v->
             timer.cancel()
             timerState = TimerState.Paused
-            updaateButtons()
+            updateButtons()
         }
 
         fab_stop.setOnClickListener{v->
             timer.cancel()
             onTimerFinished()
             timerState = TimerState.Running
-            updaateButtons()
+            updateButtons()
         }
 
     }
@@ -72,7 +86,10 @@ class MainActivity : AppCompatActivity() {
 
         initTimer()
 
-        //TODO: remove background timer, hide notification
+        //remove background timer
+        removeAlarm(this)
+
+        //TODO: hide notification
 
     }
 
@@ -82,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         if(timerState == TimerState.Running)
         {
             timer.cancel()
+            val wakeUpTime = setAlarm(this, nowSeconds,secondsRemaining)
             //TODO: start background timer and show notification.
         }
 
@@ -110,13 +128,21 @@ class MainActivity : AppCompatActivity() {
         else
             timerLengthSeconds
 
+        val alarmSetTime = PrefUtil.getAlarmSetTime(this)
+        if(alarmSetTime > 0)
+            secondsRemaining -= nowSeconds - alarmSetTime
+
+        if(secondsRemaining <= 0)
+            onTimerFinished()
+
+
         //TODO: change secondsRemaining according to where the background timerstopped
 
         //resume where we left off.
         if(timerState == TimerState.Running)
             startTimer()
 
-        updaateButtons()
+        updateButtons()
         updateCountdownUI()
 
     }
@@ -131,7 +157,7 @@ class MainActivity : AppCompatActivity() {
         PrefUtil.setSecondsRemaining(timerLengthSeconds,this)
         secondsRemaining = timerLengthSeconds
 
-        updaateButtons()
+        updateButtons()
         updateCountdownUI()
     }
 
@@ -169,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         progress_count.progress= (timerLengthSeconds - secondsRemaining).toInt()
     }
 
-    private fun updaateButtons()
+    private fun updateButtons()
     {
         when(timerState){
             TimerState.Running -> {
