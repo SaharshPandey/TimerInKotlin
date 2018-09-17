@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.iknownothing.firstkotlin.util.NotificationUtil
 import com.example.iknownothing.firstkotlin.util.PrefUtil
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         fab_stop.setOnClickListener{v->
             timer.cancel()
             onTimerFinished()
-            timerState = TimerState.Running
+            timerState = TimerState.Stopped
             updateButtons()
         }
 
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         //remove background timer
         removeAlarm(this)
-
+        NotificationUtil.hideTimerNotification(this)
         //TODO: hide notification
 
     }
@@ -101,10 +102,12 @@ class MainActivity : AppCompatActivity() {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds,secondsRemaining)
             //TODO: start background timer and show notification.
+            NotificationUtil.showTimerRunning(this,wakeUpTime)
         }
 
         else if(timerState ==TimerState.Paused)
         {
+            NotificationUtil.showTimerPaused(this)
             //TODO: show notification.
         }
 
