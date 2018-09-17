@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setIcon(R.drawable.ic_timer)
         supportActionBar?.setTitle("     Timer")
 
+
         fab_start.setOnClickListener{v->
             startTimer()
             timerState = TimerState.Running
