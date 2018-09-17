@@ -36,10 +36,15 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme"></activity>
+
+        <activity android:name=".SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
+
+
+        </activity>
     </application>
 
 </manifest>
